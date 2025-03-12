@@ -3,6 +3,9 @@ from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from sys import exit
+from shot import Shot
+#source venv/bin/activate
 
 def main():
     pygame.init()
@@ -12,13 +15,11 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
 
-
-
     #grouping
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
-    player = Player(SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2,PLAYER_RADIUS) #
+    player = Player(SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2,PLAYER_RADIUS)
 
 
     asteroids = pygame.sprite.Group()
@@ -27,6 +28,8 @@ def main():
     AsteroidField.containers = (updatable)
     asteroid_field = AsteroidField()
 
+    shots = pygame.sprite.Group()
+    Shot.containers = (shots, drawable, updatable)
     
 
     while True:
@@ -38,11 +41,17 @@ def main():
         screen.fill('black')
         for obj in drawable:
             obj.draw(screen)
-        #player.draw(screen)
-        #player.update(dt)
         pygame.display.flip()
+        for obj in asteroids:
+            if player.check_collision(obj) == True:
+                print("Game Over!")
+                exit()
 
-        #clock.tick(60)
+        for a in asteroids:
+            for s in shots:
+                if a.check_collision(s) == True:
+                    a.split()
+
         dt = clock.tick(60)/1000
 
 
